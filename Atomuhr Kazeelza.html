@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>KAZE ELZA Atomuhr</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    :root {
+        --bg: #0b0b0b;
+        --panel: #111;
+        --text: #e6e6e6;
+        --muted: #9a9a9a;
+        --accent: #ffd400; /* GELB */
+        --grid: #222;
+    }
+
+    html {
+        height: 100%;
+    }
+
+    body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background:
+            linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)),
+            url("https://elevate.at/fileadmin/EIS_images/artist/2430/8473-kaze_elza.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: var(--text);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 900px;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .header h1 {
+        font-size: 42px; /* größer */
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+    }
+
+    .header .subtitle {
+        margin-top: 10px;
+        font-size: 14px;
+        color: var(--muted);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+    }
+
+    .clock {
+        background: rgba(17,17,17,0.92);
+        border-radius: 10px;
+        padding: 28px;
+        box-shadow: 0 0 0 1px #1a1a1a inset;
+        backdrop-filter: blur(2px);
+    }
+
+    .unix-time {
+        font-size: 52px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .unix-time span {
+        color: var(--accent);
+    }
+
+    .minute-visual {
+        margin-top: 26px;
+    }
+
+    .minute-label {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .minute-bar {
+        position: relative;
+        height: 18px;
+        background: var(--grid);
+        border-radius: 9px;
+        overflow: hidden;
+    }
+
+    .minute-bar::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+            to right,
+            transparent 0,
+            transparent calc(100% / 60 - 1px),
+            #1f1f1f calc(100% / 60 - 1px),
+            #1f1f1f calc(100% / 60)
+        );
+        pointer-events: none;
+    }
+
+    .minute-progress {
+        height: 100%;
+        background: linear-gradient(
+            to right,
+            #ffd400,
+            #ffea80
+        );
+        width: 0%;
+        transition: width 0.2s linear;
+    }
+
+    .minute-ticks {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 8px;
+        letter-spacing: 0.06em;
+    }
+
+    .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+        letter-spacing: 0.06em;
+    }
+
+    .footer span {
+        color: var(--text);
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>KAZE&nbsp;ELZA&nbsp;ATOMUHR</h1>
+        
+    </div>
+
+    <div class="clock">
+        <div class="unix-time">
+            <span id="unixSeconds">0</span>
+        </div>
+
+        <div class="minute-visual">
+            <div class="minute-label">Aktuelle Minute</div>
+            <div class="minute-bar">
+                <div class="minute-progress" id="minuteProgress"></div>
+            </div>
+            <div class="minute-ticks">
+                <span>0</span>
+                <span>15</span>
+                <span>30</span>
+                <span>45</span>
+                <span>60</span>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        Wir beschließen diese Sitzung mit einer Schweigeminute für vergeudete Rauschmittel. 
+    </div>
+    <div class="footer">
+        
+        
+        Sekunden seit <span>01.01.1970 00:00:00 UTC</span>
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = Date.now();
+        const unixSeconds = Math.floor(now / 1000);
+        const secondsInMinute = unixSeconds % 60;
+
+        document.getElementById("unixSeconds").textContent = unixSeconds;
+
+        const progress = (secondsInMinute / 60) * 100;
+        document.getElementById("minuteProgress").style.width = progress + "%";
+    }
+
+    updateTime();
+    setInterval(updateTime, 250);
+</script>
+</body>
+</html>
