@@ -514,7 +514,7 @@
                 <h2>Namen</h2>
                 <form class="name-form" id="nameForm">
                     <input type="text" id="nameInput" placeholder="Name hinzufügen…" autocomplete="off" maxlength="40">
-                    <button type="submit" class="btn btn-accent">Add</button>
+                    <button type="submit" class="btn btn-accent">+</button>
                 </form>
                 <ul class="name-list" id="nameList"></ul>
                 <p class="name-empty" id="nameEmpty">Noch keine Namen.</p>
@@ -634,9 +634,12 @@
                     input.value = names[index];
                     return;
                 }
+                const prev = names[index];
                 names[index] = next;
+                if (picks.protokoll === prev) picks.protokoll = next;
+                if (picks.moderation === prev) picks.moderation = next;
                 saveNames();
-                syncPicksAfterEdit();
+                renderPicks();
             });
             input.addEventListener("keydown", (e) => {
                 if (e.key === "Enter") {
