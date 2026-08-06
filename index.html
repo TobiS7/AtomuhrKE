@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>KAZE ELZA Atomuhr</title>
+<title>KAZE ELZA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     :root {
@@ -10,8 +10,14 @@
         --panel: #111;
         --text: #e6e6e6;
         --muted: #9a9a9a;
-        --accent: #ffd400; /* GELB */
+        --accent: #ffd400;
         --grid: #222;
+        --danger: #c44;
+        --panel-bg: rgba(17,17,17,0.92);
+    }
+
+    * {
+        box-sizing: border-box;
     }
 
     html {
@@ -30,6 +36,45 @@
         background-attachment: fixed;
         color: var(--text);
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .nav {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        z-index: 100;
+    }
+
+    .nav-select {
+        appearance: none;
+        -webkit-appearance: none;
+        background: var(--accent);
+        color: #111;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 36px 10px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23111' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+    }
+
+    .nav-select:focus {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    .view {
+        display: none;
+        min-height: 100vh;
+    }
+
+    .view.active {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -39,7 +84,7 @@
         width: 100%;
         max-width: 900px;
         padding: 24px;
-        box-sizing: border-box;
+        padding-top: 72px;
     }
 
     .header {
@@ -48,23 +93,15 @@
     }
 
     .header h1 {
-        font-size: 42px; /* größer */
+        font-size: 42px;
         font-weight: 600;
         margin: 0;
         letter-spacing: 0.18em;
         color: var(--accent);
     }
 
-    .header .subtitle {
-        margin-top: 10px;
-        font-size: 14px;
-        color: var(--muted);
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-    }
-
     .clock {
-        background: rgba(17,17,17,0.92);
+        background: var(--panel-bg);
         border-radius: 10px;
         padding: 28px;
         box-shadow: 0 0 0 1px #1a1a1a inset;
@@ -120,11 +157,7 @@
 
     .minute-progress {
         height: 100%;
-        background: linear-gradient(
-            to right,
-            #ffd400,
-            #ffea80
-        );
+        background: linear-gradient(to right, #ffd400, #ffea80);
         width: 0%;
         transition: width 0.2s linear;
     }
@@ -149,99 +182,603 @@
     .footer span {
         color: var(--text);
     }
-    @media (max-width: 600px) {
 
-    .container {
-        padding: 16px;
+    /* —— Zufallsgenerator —— */
+    .rg-container {
+        width: 100%;
+        max-width: 1100px;
+        padding: 24px;
+        padding-top: 72px;
     }
 
-    .header h1 {
+    .rg-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .rg-header h1 {
+        font-size: 36px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+    }
+
+    .rg-layout {
+        display: grid;
+        grid-template-columns: minmax(240px, 320px) 1fr;
+        gap: 28px;
+        align-items: stretch;
+    }
+
+    .rg-panel {
+        background: var(--panel-bg);
+        border-radius: 10px;
+        padding: 22px;
+        box-shadow: 0 0 0 1px #1a1a1a inset;
+        backdrop-filter: blur(2px);
+    }
+
+    .rg-panel h2 {
+        margin: 0 0 16px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .name-form {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .name-form input {
+        flex: 1;
+        min-width: 0;
+        background: #0a0a0a;
+        border: 1px solid #2a2a2a;
+        border-radius: 6px;
+        color: var(--text);
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+
+    .name-form input:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    .btn {
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
+    }
+
+    .btn:active {
+        transform: scale(0.97);
+    }
+
+    .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-accent {
+        background: var(--accent);
+        color: #111;
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+
+    .btn-ghost {
+        background: #1c1c1c;
+        color: var(--text);
+        border: 1px solid #333;
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 1px solid #442222;
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .btn-danger:hover {
+        background: #2a1212;
+    }
+
+    .name-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 420px;
+        overflow-y: auto;
+    }
+
+    .name-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #0a0a0a;
+        border: 1px solid #222;
+        border-radius: 6px;
+        padding: 6px 8px;
+    }
+
+    .name-item input {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: none;
+        color: var(--text);
+        font-size: 15px;
+        padding: 6px 4px;
+    }
+
+    .name-item input:focus {
+        outline: none;
+        color: var(--accent);
+    }
+
+    .name-empty {
+        color: var(--muted);
+        font-size: 13px;
+        letter-spacing: 0.06em;
+        padding: 12px 0;
+    }
+
+    .rg-picks {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        min-height: 100%;
+    }
+
+    .pick {
+        text-align: center;
+    }
+
+    .pick-label {
+        font-size: 13px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .pick-name {
+        font-size: 48px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        min-height: 1.2em;
+        word-break: break-word;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .pick-name.empty {
+        color: #444;
         font-size: 28px;
         letter-spacing: 0.12em;
+        font-weight: 500;
     }
 
-    .unix-time {
-        font-size: 34px;
-        letter-spacing: 0.08em;
-        word-break: keep-all;
-        overflow-wrap: normal;
+    .pick-name.spinning {
+        opacity: 0.35;
+        transform: scale(0.96);
     }
 
-    .clock {
-        padding: 20px;
-    }
-
-    .minute-bar {
-        height: 22px;
-    }
-
-    .minute-label {
-        font-size: 12px;
-        letter-spacing: 0.1em;
-    }
-
-    .minute-ticks {
-        font-size: 10px;
-    }
-
-    .footer {
-        font-size: 11px;
+    .pick-actions {
         margin-top: 14px;
     }
-}
 
+    .reroll-both {
+        margin-top: 8px;
+        width: 100%;
+        padding: 18px 20px;
+        font-size: 16px;
+        letter-spacing: 0.16em;
+        background: var(--accent);
+        color: #111;
+        border-radius: 8px;
+    }
+
+    .reroll-both:hover:not(:disabled) {
+        background: #ffe14d;
+    }
+
+    @media (max-width: 800px) {
+        .rg-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .pick-name {
+            font-size: 36px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .nav {
+            top: 12px;
+            left: 12px;
+        }
+
+        .container,
+        .rg-container {
+            padding: 16px;
+            padding-top: 64px;
+        }
+
+        .header h1,
+        .rg-header h1 {
+            font-size: 26px;
+            letter-spacing: 0.1em;
+        }
+
+        .unix-time {
+            font-size: 34px;
+            letter-spacing: 0.08em;
+        }
+
+        .clock {
+            padding: 20px;
+        }
+
+        .minute-bar {
+            height: 22px;
+        }
+
+        .pick-name {
+            font-size: 30px;
+        }
+
+        .reroll-both {
+            font-size: 14px;
+            padding: 16px;
+        }
+    }
 </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>KAZE&nbsp;ELZA&nbsp;ATOMUHR</h1>
-        
-    </div>
 
-    <div class="clock">
-        <div class="unix-time">
-            <span id="unixSeconds">0</span>
+<nav class="nav" aria-label="Seitenwahl">
+    <select class="nav-select" id="viewSelect" aria-label="Ansicht wählen">
+        <option value="atomuhr">Atomuhr</option>
+        <option value="zufallsgenerator">Zufallsgenerator</option>
+    </select>
+</nav>
+
+<!-- Atomuhr -->
+<div class="view active" id="view-atomuhr">
+    <div class="container">
+        <div class="header">
+            <h1>KAZE&nbsp;ELZA&nbsp;ATOMUHR</h1>
         </div>
 
-        <div class="minute-visual">
-            <div class="minute-label">Aktuelle Minute</div>
-            <div class="minute-bar">
-                <div class="minute-progress" id="minuteProgress"></div>
+        <div class="clock">
+            <div class="unix-time">
+                <span id="unixSeconds">0</span>
             </div>
-            <div class="minute-ticks">
-                <span>0</span>
-                <span>15</span>
-                <span>30</span>
-                <span>45</span>
-                <span>60</span>
+
+            <div class="minute-visual">
+                <div class="minute-label">Aktuelle Minute</div>
+                <div class="minute-bar">
+                    <div class="minute-progress" id="minuteProgress"></div>
+                </div>
+                <div class="minute-ticks">
+                    <span>0</span>
+                    <span>15</span>
+                    <span>30</span>
+                    <span>45</span>
+                    <span>60</span>
+                </div>
             </div>
         </div>
+        <div class="footer">
+            Wir beschließen diese Sitzung mit einer Schweigeminute für vergeudete Rauschmittel.
+        </div>
+        <div class="footer">
+            Sekunden seit <span>01.01.1970 00:00:00 UTC</span>
+        </div>
     </div>
-    <div class="footer">
-        Wir beschließen diese Sitzung mit einer Schweigeminute für vergeudete Rauschmittel. 
-    </div>
-    <div class="footer">
-        
-        
-        Sekunden seit <span>01.01.1970 00:00:00 UTC</span>
+</div>
+
+<!-- Zufallsgenerator -->
+<div class="view" id="view-zufallsgenerator">
+    <div class="rg-container">
+        <div class="rg-header">
+            <h1>ZUFALLSGENERATOR</h1>
+        </div>
+
+        <div class="rg-layout">
+            <aside class="rg-panel">
+                <h2>Namen</h2>
+                <form class="name-form" id="nameForm">
+                    <input type="text" id="nameInput" placeholder="Name hinzufügen…" autocomplete="off" maxlength="40">
+                    <button type="submit" class="btn btn-accent">Add</button>
+                </form>
+                <ul class="name-list" id="nameList"></ul>
+                <p class="name-empty" id="nameEmpty">Noch keine Namen.</p>
+            </aside>
+
+            <section class="rg-panel rg-picks">
+                <div class="pick">
+                    <div class="pick-label">Protokoll</div>
+                    <div class="pick-name empty" id="protokollName">—</div>
+                    <div class="pick-actions">
+                        <button type="button" class="btn btn-ghost" id="rerollProtokoll">Reroll Protokoll</button>
+                    </div>
+                </div>
+
+                <div class="pick">
+                    <div class="pick-label">Moderation</div>
+                    <div class="pick-name empty" id="moderationName">—</div>
+                    <div class="pick-actions">
+                        <button type="button" class="btn btn-ghost" id="rerollModeration">Reroll Moderation</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn reroll-both" id="rerollBoth">Beide neu würfeln</button>
+            </section>
+        </div>
     </div>
 </div>
 
 <script>
+    /* —— Navigation —— */
+    const viewSelect = document.getElementById("viewSelect");
+    const views = {
+        atomuhr: document.getElementById("view-atomuhr"),
+        zufallsgenerator: document.getElementById("view-zufallsgenerator"),
+    };
+
+    function showView(name) {
+        Object.keys(views).forEach((key) => {
+            views[key].classList.toggle("active", key === name);
+        });
+        viewSelect.value = name;
+        try {
+            localStorage.setItem("kaze-view", name);
+        } catch (_) {}
+    }
+
+    viewSelect.addEventListener("change", () => showView(viewSelect.value));
+
+    try {
+        const saved = localStorage.getItem("kaze-view");
+        if (saved && views[saved]) showView(saved);
+    } catch (_) {}
+
+    /* —— Atomuhr —— */
     function updateTime() {
         const now = Date.now();
         const unixSeconds = Math.floor(now / 1000);
         const secondsInMinute = unixSeconds % 60;
 
         document.getElementById("unixSeconds").textContent = unixSeconds;
-
-        const progress = (secondsInMinute / 60) * 100;
-        document.getElementById("minuteProgress").style.width = progress + "%";
+        document.getElementById("minuteProgress").style.width =
+            (secondsInMinute / 60) * 100 + "%";
     }
 
     updateTime();
     setInterval(updateTime, 250);
+
+    /* —— Zufallsgenerator —— */
+    const STORAGE_KEY = "kaze-zufall-names";
+    let names = [];
+    let picks = { protokoll: null, moderation: null };
+
+    const nameForm = document.getElementById("nameForm");
+    const nameInput = document.getElementById("nameInput");
+    const nameList = document.getElementById("nameList");
+    const nameEmpty = document.getElementById("nameEmpty");
+    const protokollEl = document.getElementById("protokollName");
+    const moderationEl = document.getElementById("moderationName");
+    const rerollProtokollBtn = document.getElementById("rerollProtokoll");
+    const rerollModerationBtn = document.getElementById("rerollModeration");
+    const rerollBothBtn = document.getElementById("rerollBoth");
+
+    function loadNames() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) names = parsed.filter((n) => typeof n === "string");
+            }
+        } catch (_) {
+            names = [];
+        }
+    }
+
+    function saveNames() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(names));
+        } catch (_) {}
+    }
+
+    function renderNames() {
+        nameList.innerHTML = "";
+        nameEmpty.style.display = names.length ? "none" : "block";
+
+        names.forEach((name, index) => {
+            const li = document.createElement("li");
+            li.className = "name-item";
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = name;
+            input.setAttribute("aria-label", "Name bearbeiten");
+            input.maxLength = 40;
+            input.addEventListener("change", () => {
+                const next = input.value.trim();
+                if (!next) {
+                    input.value = names[index];
+                    return;
+                }
+                names[index] = next;
+                saveNames();
+                syncPicksAfterEdit();
+            });
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    input.blur();
+                }
+            });
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn btn-danger";
+            remove.textContent = "×";
+            remove.setAttribute("aria-label", "Name entfernen");
+            remove.addEventListener("click", () => {
+                const removed = names[index];
+                names.splice(index, 1);
+                saveNames();
+                if (picks.protokoll === removed) picks.protokoll = null;
+                if (picks.moderation === removed) picks.moderation = null;
+                renderNames();
+                renderPicks();
+                updateButtons();
+            });
+
+            li.appendChild(input);
+            li.appendChild(remove);
+            nameList.appendChild(li);
+        });
+
+        updateButtons();
+    }
+
+    function syncPicksAfterEdit() {
+        if (picks.protokoll && !names.includes(picks.protokoll)) picks.protokoll = null;
+        if (picks.moderation && !names.includes(picks.moderation)) picks.moderation = null;
+        renderPicks();
+        updateButtons();
+    }
+
+    function setPickDisplay(el, value) {
+        if (!value) {
+            el.textContent = "—";
+            el.classList.add("empty");
+        } else {
+            el.textContent = value;
+            el.classList.remove("empty");
+        }
+    }
+
+    function renderPicks() {
+        setPickDisplay(protokollEl, picks.protokoll);
+        setPickDisplay(moderationEl, picks.moderation);
+    }
+
+    function updateButtons() {
+        const has = names.length > 0;
+        const hasTwo = names.length >= 2;
+        rerollProtokollBtn.disabled = !has;
+        rerollModerationBtn.disabled = !has;
+        rerollBothBtn.disabled = !has;
+        if (!hasTwo && has) {
+            // still allow both with replacement awareness in pick logic
+        }
+    }
+
+    function randomFrom(list) {
+        return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function animatePick(el, done) {
+        el.classList.add("spinning");
+        setTimeout(() => {
+            el.classList.remove("spinning");
+            done();
+        }, 180);
+    }
+
+    function pickProtokoll() {
+        if (!names.length) return;
+        const pool = names.filter((n) => n !== picks.moderation);
+        const choice = randomFrom(pool.length ? pool : names);
+        animatePick(protokollEl, () => {
+            picks.protokoll = choice;
+            renderPicks();
+        });
+    }
+
+    function pickModeration() {
+        if (!names.length) return;
+        const pool = names.filter((n) => n !== picks.protokoll);
+        const choice = randomFrom(pool.length ? pool : names);
+        animatePick(moderationEl, () => {
+            picks.moderation = choice;
+            renderPicks();
+        });
+    }
+
+    function pickBoth() {
+        if (!names.length) return;
+
+        let protokoll;
+        let moderation;
+
+        if (names.length === 1) {
+            protokoll = names[0];
+            moderation = names[0];
+        } else {
+            const shuffled = [...names].sort(() => Math.random() - 0.5);
+            protokoll = shuffled[0];
+            moderation = shuffled[1];
+        }
+
+        animatePick(protokollEl, () => {});
+        animatePick(moderationEl, () => {
+            picks.protokoll = protokoll;
+            picks.moderation = moderation;
+            renderPicks();
+        });
+    }
+
+    nameForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const value = nameInput.value.trim();
+        if (!value) return;
+        if (names.includes(value)) {
+            nameInput.value = "";
+            return;
+        }
+        names.push(value);
+        saveNames();
+        nameInput.value = "";
+        renderNames();
+        nameInput.focus();
+    });
+
+    rerollProtokollBtn.addEventListener("click", pickProtokoll);
+    rerollModerationBtn.addEventListener("click", pickModeration);
+    rerollBothBtn.addEventListener("click", pickBoth);
+
+    loadNames();
+    renderNames();
+    renderPicks();
 </script>
 </body>
 </html>
